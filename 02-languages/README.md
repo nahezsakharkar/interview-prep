@@ -13,8 +13,8 @@ This section covers core interview language fundamentals for Java, TypeScript, a
 ## Notes
 
 - [Java fundamentals](java/java-fundamentals.md) — OOP, collections, generics, concurrency basics
-- [TypeScript essentials](typescript/typescript-essentials.md) — types, interfaces, utility types, async patterns
-- [JavaScript essentials](javascript/javascript-essentials.md) — scoping, closures, event loop, prototypes, async/await
+- [TypeScript essentials](typescript/typescript-essentials.md) — generics, type/interface choices, narrowing, utility types, runtime validation
+- [JavaScript essentials](javascript/javascript-essentials.md) — closures, hoisting, `this`, prototypes, promises, event-loop ordering, ES2015+ features
 
 ## Focus areas
 

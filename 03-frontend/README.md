@@ -12,7 +12,10 @@ This section covers the frontend concepts that most often appear in interviews: 
 
 ## Notes
 
+- [React interview notes](react.md) — React 19 rendering, state, memoization, and interview Q&A
 - [Rendering and reconciliation](rendering-and-reconciliation.md)
+- [Next.js interview notes](nextjs.md) — App Router, Server/Client Components, and request flow
+- [Next.js rendering](nextjs-rendering.md) — SSR, SSG, ISR, caching, streaming, and revalidation trade-offs
 - [Hooks and useEffect](hooks-and-useeffect.md)
 - [Memoization and state](memoization-and-state.md)
 - [Next.js rendering](nextjs-rendering.md)

@@ -35,6 +35,7 @@ This repository is a personal, Markdown-only knowledge base for preparing for so
 - [11-behavioral-hr](11-behavioral-hr/README.md) — STAR stories, leadership, HR questions, and negotiation
 - [12-aptitude-puzzles](12-aptitude-puzzles/README.md) — quantitative, logical reasoning, and puzzles
 - [13-cs-fundamentals](13-cs-fundamentals/README.md) — operating systems, networking, OOP, and architecture
+- [14-resume-deep-dive](14-resume-deep-dive/README.md) — evidence-backed walkthroughs of projects and resume claims
 - [99-revision](99-revision/README.md) — cheat sheets, study plans, and mistakes to revisit
 - [templates](templates/README.md) — reusable formats for consistent notes
 - [assets](assets) — supporting files used by notes, when applicable
@@ -44,11 +45,11 @@ This repository is a personal, Markdown-only knowledge base for preparing for so
 Check a section after reviewing its notes and completing relevant practice. This tracks personal revision progress, not whether a folder exists.
 
 - [ ] [01-dsa](01-dsa/README.md)
-- [ ] [02-languages](02-languages/README.md)
-- [ ] [03-frontend](03-frontend/README.md)
+- [ ] [02-languages](02-languages/README.md) — JavaScript and TypeScript notes expanded; Java and Python remain pending
+- [ ] [03-frontend](03-frontend/README.md) — React and Next.js core notes expanded; testing and other frontend gaps remain
 - [ ] [04-backend](04-backend/README.md)
 - [ ] [05-databases](05-databases/README.md)
-- [ ] [06-system-design](06-system-design/README.md)
+- [ ] [06-system-design](06-system-design/README.md) — fundamentals/scalability plus URL, chat, notification, news-feed, and e-commerce cases expanded; other cases remain
 - [ ] [07-design-patterns](07-design-patterns/README.md)
 - [ ] [08-devops](08-devops/README.md)
 - [ ] [09-agentic-ai](09-agentic-ai/README.md)
@@ -56,6 +57,7 @@ Check a section after reviewing its notes and completing relevant practice. This
 - [ ] [11-behavioral-hr](11-behavioral-hr/README.md)
 - [ ] [12-aptitude-puzzles](12-aptitude-puzzles/README.md)
 - [ ] [13-cs-fundamentals](13-cs-fundamentals/README.md)
+- [ ] [14-resume-deep-dive](14-resume-deep-dive/README.md) — nine project-note scaffolds created; metric and project facts still need verification
 - [ ] [99-revision](99-revision/README.md)
 
 ## How I revise
