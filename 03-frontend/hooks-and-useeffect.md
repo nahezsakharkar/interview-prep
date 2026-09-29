@@ -19,6 +19,17 @@ Hooks let function components use state, effects, and context. `useEffect` is te
 - `useCallback`: memoize function identity
 - `useEffect`: side effects after render
 
+```mermaid
+flowchart TD
+  render[Render component] --> commit[Commit UI update]
+  commit --> changed{Effect dependencies changed?}
+  changed -->|No| continue[Continue without rerunning effect]
+  changed -->|Yes| cleanup[Run previous cleanup, if present]
+  cleanup --> setup[Run effect setup after commit]
+  setup --> external[Synchronize with external system]
+  unmount[Component unmounts] --> cleanup
+```
+
 ## useEffect pitfalls
 
 - Dependency arrays can hide stale values.

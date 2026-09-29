@@ -24,6 +24,18 @@ Indexing is essential for large tables and high-traffic queries. It changes both
 
 Indexes are usually B-tree or hash-based structures. They reduce the number of rows scanned but add overhead to inserts, updates, and deletes.
 
+```mermaid
+flowchart TD
+	root["50"] --> left["20"]
+	root --> right["80"]
+	left --> low["Leaf keys: 5, 12"]
+	left --> mid["Leaf keys: 20, 35"]
+	right --> high["Leaf keys: 50, 65"]
+	right --> max["Leaf keys: 80, 95"]
+```
+
+This simplified tree illustrates how an index narrows the search path; actual B-tree page layouts and fan-out depend on the database implementation.
+
 ## Code example
 
 ```sql

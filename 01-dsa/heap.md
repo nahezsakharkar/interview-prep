@@ -20,6 +20,18 @@ A heap is a complete binary tree that satisfies the heap property: parent is sma
 - Build heap: O(n)
 - Space: O(n)
 
+## Visual example: min-heap
+
+The root is the smallest value. A heap is only partially ordered: each parent is no larger than its children, but siblings are not necessarily sorted.
+
+```mermaid
+flowchart TD
+  n1[1] --> n3[3]
+  n1 --> n5[5]
+  n3 --> n7[7]
+  n3 --> n8[8]
+```
+
 ## Problem 1: Kth largest element
 
 ```ts

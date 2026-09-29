@@ -26,6 +26,18 @@ Trees are common in hierarchical data, expression parsing, DOM structures, and d
 - BFS explores breadth-first level by level
 - Use recursion or an explicit stack/queue
 
+## Visual example
+
+For this tree, the visit orders are preorder `A, B, D, E, C`, inorder `D, B, E, A, C`, postorder `D, E, B, C, A`, and level order `A, B, C, D, E`.
+
+```mermaid
+flowchart TD
+  A --> B
+  A --> C
+  B --> D
+  B --> E
+```
+
 ## Code example
 
 ```ts

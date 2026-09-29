@@ -24,6 +24,19 @@ It shortens delivery cycles, reduces manual errors, and helps teams ship faster 
 
 A pipeline usually runs tests, builds artifacts, performs security checks, and then deploys to staging or production with guardrails.
 
+```mermaid
+flowchart LR
+  commit[Commit / pull request] --> tests[Tests and quality checks]
+  tests -->|Pass| build[Build immutable artifact]
+  tests -->|Fail| stop[Stop and report failure]
+  build --> security[Security checks]
+  security -->|Pass| staging[Deploy to staging]
+  security -->|Fail| stop
+  staging --> verify[Smoke / acceptance checks]
+  verify -->|Pass and approved| production[Deploy to production]
+  verify -->|Fail| rollback[Stop or roll back]
+```
+
 ## Code example
 
 ```yaml

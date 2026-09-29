@@ -32,8 +32,19 @@ last_reviewed: 2026-09-30
 
 ## Core components
 
-```text
-Client -> API -> DB / Cache -> Redirect Handler
+```mermaid
+flowchart LR
+	client[Client] --> api[URL API]
+	api -->|Create| id[Generate unique short code]
+	id --> db[(Mapping store)]
+	client -->|Visit short URL| redirect[Redirect handler]
+	redirect --> cache{Cache hit?}
+	cache -->|Yes| target[Original URL]
+	cache -->|No| db
+	db -->|Mapping| cache
+	cache --> target
+	target -->|302/301 redirect| client
+	redirect -. enqueue click event .-> analytics[Async analytics worker]
 ```
 
 ## Key trade-offs

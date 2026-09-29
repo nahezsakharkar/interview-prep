@@ -25,6 +25,22 @@ It reduces hallucination, improves factual grounding, and allows access to priva
 5. Inject results into the model context
 6. Generate a grounded answer
 
+```mermaid
+flowchart LR
+	subgraph Ingestion["Offline ingestion"]
+		docs[Documents] --> chunk[Chunk]
+		chunk --> embed[Create embeddings]
+		embed --> index[(Vector or hybrid index)]
+	end
+	subgraph Query["Online query"]
+		question[User question] --> retrieve[Retrieve relevant chunks]
+		index --> retrieve
+		retrieve --> context[Add retrieved context]
+		context --> model[Generate grounded response]
+		model --> answer[Answer with citations or sources]
+	end
+```
+
 ## Trade-offs
 
 - Better grounding, but more latency and cost

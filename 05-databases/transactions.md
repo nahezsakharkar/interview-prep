@@ -24,6 +24,16 @@ Transactions protect consistency in financial, inventory, and payment workflows.
 
 Database systems enforce atomicity, consistency, isolation, and durability (ACID). Isolation levels determine how concurrent transactions interact.
 
+```mermaid
+flowchart TD
+	begin[Begin transaction] --> work[Perform related operations]
+	work --> valid{All operations succeed?}
+	valid -->|Yes| commit[Commit atomically]
+	valid -->|No| rollback[Rollback changes]
+	commit --> done[Transaction complete]
+	rollback --> done
+```
+
 ## Code example
 
 ```sql

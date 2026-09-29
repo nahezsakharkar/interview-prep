@@ -25,6 +25,20 @@ Two pointers walk through a data structure from different ends or with a moving 
 - Worst: O(n)
 - Space: O(1)
 
+## Visual example: sorted two-sum
+
+For `[1, 2, 4, 6, 9]` and target `11`, the first pair is too small, so move `left` right; the next pair matches.
+
+```mermaid
+flowchart LR
+  subgraph First["Initial pointers: sum = 1 + 9 = 10, too small"]
+    a1["1 ← left"] --- a2[2] --- a3[4] --- a4[6] --- a5["9 ← right"]
+  end
+  subgraph Next["If the sum is too small, move left inward"]
+    b1[1] --- b2["2 ← left"] --- b3[4] --- b4[6] --- b5["9 ← right"]
+  end
+```
+
 ## Problem 1: Two sum in sorted array
 
 Given a sorted array and target, find indices that sum to target.

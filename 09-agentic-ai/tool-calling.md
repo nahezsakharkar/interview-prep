@@ -23,6 +23,19 @@ Without tools, an LLM is limited to its training and context. Tools give it acce
 - Retry and timeout policies
 - Safe defaults and explicit approval for destructive actions
 
+```mermaid
+flowchart TD
+  model[Model proposes tool and arguments] --> validate[Validate schema and permission]
+  validate --> allowed{Allowed and valid?}
+  allowed -->|No| reject[Reject or ask model to revise]
+  allowed -->|Yes| approval{Needs user approval?}
+  approval -->|Yes| confirm[Request confirmation]
+  confirm -->|Approved| execute[Execute tool with limits]
+  confirm -->|Declined| reject
+  approval -->|No| execute
+  execute --> result[Return bounded result to model]
+```
+
 ## Example
 
 ```json

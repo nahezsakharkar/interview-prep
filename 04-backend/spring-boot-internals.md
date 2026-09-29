@@ -27,6 +27,16 @@ Spring Boot reduces boilerplate and bootstraps an application with sensible defa
 5. Bean is used in the application context
 6. Shutdown hooks run when the container closes
 
+```mermaid
+flowchart TD
+    discover[Discover configuration and components] --> definitions[Register bean definitions]
+    definitions --> create[Instantiate beans]
+    create --> inject[Inject dependencies]
+    inject --> process[Bean post-processors and initialization]
+    process --> ready[Bean available in application context]
+    ready --> shutdown[Context closes: destruction callbacks]
+```
+
 ## Auto-configuration
 
 Spring Boot inspects the classpath and activates configuration classes such as `DataSourceAutoConfiguration` or `WebMvcAutoConfiguration` based on present dependencies.

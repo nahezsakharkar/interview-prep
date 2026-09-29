@@ -24,6 +24,16 @@ It is the standard for managing containers in production-grade distributed syste
 
 Pods run application containers, Deployments manage replicas, Services provide stable networking, and Ingress handles external access.
 
+```mermaid
+flowchart LR
+  user[External client] --> ingress[Ingress]
+  ingress --> service[Service: stable endpoint]
+  service --> pod1[Ready Pod]
+  service --> pod2[Ready Pod]
+  deployment[Deployment controller] -. keeps desired replicas .-> pod1
+  deployment -. keeps desired replicas .-> pod2
+```
+
 ## Code example
 
 ```yaml

@@ -19,6 +19,20 @@ Backtracking tries a candidate path, recurses, and then undoes the choice when i
 - Worst: exponential
 - Space: O(depth) recursion stack, plus output storage
 
+## Visual example: subsets of [1, 2]
+
+Each level decides whether to include the next value. Every leaf is one subset; a real constrained search can prune a branch as soon as it cannot produce a valid answer.
+
+```mermaid
+flowchart TD
+  start["[]"] --> take1["take 1 → [1]"]
+  start --> skip1["skip 1 → []"]
+  take1 --> take2["take 2 → [1, 2]"]
+  take1 --> skip2["skip 2 → [1]"]
+  skip1 --> take2b["take 2 → [2]"]
+  skip1 --> skip2b["skip 2 → []"]
+```
+
 ## Problem 1: Subsets
 
 ```ts

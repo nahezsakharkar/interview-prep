@@ -22,6 +22,17 @@ Without a protocol, every tool integration becomes custom. MCP gives a common in
 - safer contracts between models and systems
 - more portable agent architectures
 
+```mermaid
+flowchart LR
+	host[AI application / host] --> client[MCP client]
+	client <-->|protocol connection| server[MCP server]
+	server --> tools[Tools: actions]
+	server --> resources[Resources: context]
+	server --> prompts[Prompts: reusable instructions]
+	tools --> systems[External systems]
+	resources --> host
+```
+
 ## Interview framing
 
 > MCP is not the model itself; it is the plumbing and contract layer that lets agents interact with tools in a structured and portable way.

@@ -24,6 +24,22 @@ JavaScript is central to browser interactivity and many modern full-stack stacks
 
 Understanding scope, execution context, event loop, microtasks, and prototype inheritance explains much of JavaScript behavior.
 
+### Event-loop ordering
+
+After the current call stack empties, JavaScript drains queued microtasks (such as Promise callbacks) before taking the next task (such as a timer callback).
+
+```mermaid
+flowchart LR
+  script[Run synchronous script] --> stack{Call stack empty?}
+  promise[Promise callback] --> micro[(Microtask queue)]
+  timer[setTimeout callback] --> tasks[(Task queue)]
+  stack -->|Yes| drain[Drain microtasks]
+  micro --> drain
+  drain --> next[Run next queued task]
+  tasks --> next
+  next --> stack
+```
+
 ## Code example
 
 ```js

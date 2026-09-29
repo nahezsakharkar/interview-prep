@@ -21,8 +21,16 @@ An agent is a system that can reason, choose actions, invoke tools, and iterate 
 
 ## Example workflow
 
-```text
-User goal -> model decides tool -> tool output -> model reasons -> more tools or final answer
+```mermaid
+flowchart TD
+	goal[User goal] --> reason[Model reasons about next step]
+	reason --> action{Need an action?}
+	action -->|Yes| tool[Invoke a permitted tool]
+	tool --> observe[Inspect result]
+	observe --> complete{Goal met or stop condition?}
+	complete -->|No| reason
+	complete -->|Yes| answer[Return answer]
+	action -->|No| answer
 ```
 
 ## Interview guidance

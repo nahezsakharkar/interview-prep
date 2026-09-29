@@ -18,6 +18,18 @@ Dynamic programming breaks a problem into overlapping subproblems and reuses com
 - Common forms: O(n), O(n^2), O(n * m)
 - Space: O(n) or O(n * m)
 
+## Visual example: climbing stairs
+
+Each state depends on the previous two states. The arrows show dependencies; evaluate from the base cases toward the target.
+
+```mermaid
+flowchart LR
+  dp1["dp[1] = 1"] --> dp3["dp[3] = dp[2] + dp[1]"]
+  dp2["dp[2] = 2"] --> dp3
+  dp2 --> dp4["dp[4] = dp[3] + dp[2]"]
+  dp3 --> dp4
+```
+
 ## Problem 1: Climbing stairs
 
 ```ts

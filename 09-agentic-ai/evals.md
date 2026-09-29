@@ -24,6 +24,18 @@ Without evaluation, it is hard to know whether a prompt, tool, or agent is impro
 
 Typical metrics include correctness, latency, grounding, safety, cost, and user satisfaction. Robust systems track evaluation sets and regressions.
 
+```mermaid
+flowchart LR
+  dataset[Curated evaluation set] --> candidate[Run candidate model, prompt, or agent]
+  candidate --> outputs[Collect outputs and traces]
+  outputs --> score[Score quality, safety, latency, and cost]
+  score --> gate{Meets release thresholds?}
+  gate -->|Yes| release[Release or continue rollout]
+  gate -->|No| analyze[Inspect failures and regressions]
+  analyze --> improve[Change prompt, model, tools, or data]
+  improve --> candidate
+```
+
 ## Code example
 
 ```ts

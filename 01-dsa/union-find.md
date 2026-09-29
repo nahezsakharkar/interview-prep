@@ -14,9 +14,25 @@ Union-find, also called disjoint set union (DSU), tracks connected components an
 
 ## Typical complexity
 
-- Find: O(?(n)) amortized
-- Union: O(?(n)) amortized
+- Find / union: O(α(n)) amortized with path compression and union by rank or size
 - Space: O(n)
+
+## Visual example: path compression
+
+After unions, `find(3)` follows parent links to root `0`. Path compression then makes `3` point directly to the root for later lookups.
+
+```mermaid
+flowchart LR
+  subgraph Before["Before find(3)"]
+    b3[3] --> b2[2] --> b0["0 (root)"]
+    b1[1] --> b0
+  end
+  subgraph After["After find(3)"]
+    a3[3] --> a0["0 (root)"]
+    a2[2] --> a0
+    a1[1] --> a0
+  end
+```
 
 ## Problem 1: Number of connected components
 

@@ -29,6 +29,29 @@ OAuth2 is a delegation framework. A client asks the authorization server for acc
 - Client Credentials
 - Refresh Token
 
+### Authorization Code flow with PKCE
+
+This sequence shows a public client obtaining an access token. PKCE binds the authorization request to the later token exchange using a verifier.
+
+```mermaid
+sequenceDiagram
+	actor User
+	participant Browser
+	participant Client
+	participant Auth as Authorization server
+	participant API as Resource server
+	User->>Client: Start sign-in
+	Client->>Browser: Redirect with client_id and code_challenge
+	Browser->>Auth: Authorization request
+	User->>Auth: Authenticate and consent
+	Auth-->>Browser: Redirect with authorization code
+	Browser-->>Client: Return authorization code
+	Client->>Auth: Exchange code plus code_verifier
+	Auth-->>Client: Access token
+	Client->>API: Request with bearer access token
+	API-->>Client: Protected resource
+```
+
 ## Example token checks
 
 ```java

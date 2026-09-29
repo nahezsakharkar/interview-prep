@@ -12,6 +12,18 @@ last_reviewed: 2026-09-30
 
 A trie is a tree-like structure used for efficient prefix-based lookup. It is especially useful in dictionaries, autocomplete, and prefix matching tasks.
 
+## Visual example
+
+The words `car` and `cat` share the `ca` prefix. A marked terminal node means a complete word ends there; a prefix alone is not necessarily a stored word.
+
+```mermaid
+flowchart LR
+  root((root)) --> c[c]
+  c --> a[a]
+  a --> r["r • end"]
+  a --> t["t • end"]
+```
+
 ## Typical complexity
 
 - Insert: O(L)

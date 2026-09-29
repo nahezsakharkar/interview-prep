@@ -38,8 +38,16 @@ Caching reduces repeated fetches by storing hot data closer to the caller.
 
 ## Example
 
-```text
-Client -> Load Balancer -> App Server -> Redis Cache -> Database
+```mermaid
+flowchart LR
+	client[Client] --> lb[Load balancer]
+	lb --> app[Healthy app instance]
+	app --> cache{Cache hit?}
+	cache -->|Yes| response[Return response]
+	cache -->|No| db[(Database)]
+	db -->|Read result| cache
+	cache -->|Store and return| response
+	health[Health checks] -. remove unhealthy instance .-> lb
 ```
 
 ## Interview guidance

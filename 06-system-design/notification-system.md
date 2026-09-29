@@ -25,11 +25,16 @@ last_reviewed: 2026-09-30
 
 ```mermaid
 flowchart LR
-    API --> Queue
-    Queue --> Worker
-    Worker --> Email
-    Worker --> SMS
-    Worker --> Push
+    API[Notification API] -->|request with idempotency key| Queue[(Work queue)]
+    Queue --> Worker[Delivery worker]
+    Worker --> Status[(Delivery status store)]
+    Worker --> Provider{Channel provider}
+    Provider --> Email[Email]
+    Provider --> SMS[SMS]
+    Provider --> Push[Push]
+    Provider -->|Transient failure| Retry[Backoff and retry]
+    Retry --> Queue
+    Provider -->|Retries exhausted| DLQ[(Dead-letter queue)]
 ```
 
 ## Failure handling

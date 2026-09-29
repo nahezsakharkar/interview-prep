@@ -26,6 +26,19 @@ A system is scalable when it can handle more load, more users, or more data with
 - Read scaling: cache and replicas
 - Write scaling: partitioning, queueing, and async patterns
 
+```mermaid
+flowchart TD
+	load[Growing workload] --> bottleneck{Where is the bottleneck?}
+	bottleneck -->|CPU or memory per instance| vertical[Scale up instance]
+	bottleneck -->|Stateless app capacity| horizontal[Add instances behind load balancer]
+	bottleneck -->|Read-heavy data| reads[Cache and read replicas]
+	bottleneck -->|Write or storage limit| writes[Partition data or process asynchronously]
+	vertical --> measure[Measure latency, throughput, and cost]
+	horizontal --> measure
+	reads --> measure
+	writes --> measure
+```
+
 ## Common interview answer
 
 > Start with single-instance design, then identify bottlenecks. Scale reads with caching and replicas, scale writes with sharding or async workers, and add observability before you optimize prematurely.

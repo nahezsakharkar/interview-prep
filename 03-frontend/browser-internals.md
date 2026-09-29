@@ -24,6 +24,21 @@ These concepts explain rendering behavior, layout thrashing, input responsivenes
 
 The browser pipeline usually consists of parsing, style calculation, layout, paint, and composition. Async tasks and the event loop also matter for JavaScript execution.
 
+```mermaid
+flowchart TD
+	html[HTML] --> parser[HTML parser]
+	parser --> dom[DOM]
+	css[CSS] --> cssparser[CSS parser]
+	cssparser --> cssom[CSSOM]
+	dom --> render[Render tree]
+	cssom --> render
+	render --> layout[Layout: geometry]
+	layout --> paint[Paint: pixels / layers]
+	paint --> composite[Composite layers]
+	js[JavaScript changes] -. may update .-> dom
+	js -. may update .-> cssom
+```
+
 ## Code example
 
 ```js

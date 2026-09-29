@@ -30,6 +30,20 @@ Guardrails constrain agent behavior to keep it safe, useful, and aligned with po
 - confirmation step before destructive actions
 - monitoring for prompt injection or unsafe instructions
 
+```mermaid
+flowchart TD
+	request[Incoming request] --> scope[Check identity, scope, and policy]
+	scope --> permitted{Permitted?}
+	permitted -->|No| refuse[Decline safely]
+	permitted -->|Yes| action[Perform allowed reasoning or tool call]
+	action --> check{Sensitive or destructive action?}
+	check -->|Yes| confirm[Require explicit approval]
+	check -->|No| validate[Validate result]
+	confirm -->|Approved| validate
+	confirm -->|Declined| refuse
+	validate --> response[Return response; persist only appropriate memory]
+```
+
 ## Interview guidance
 
 - Memory improves continuity, but it must be filtered and versioned.

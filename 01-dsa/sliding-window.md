@@ -19,6 +19,20 @@ Sliding window maintains a moving range over an array or string and updates it a
 - Worst: O(n)
 - Space: O(1) to O(k) depending on the state tracked
 
+## Visual example: fixed-size window
+
+For a window of size three, each step removes the outgoing value and adds the incoming value rather than recomputing the whole sum.
+
+```mermaid
+flowchart LR
+  subgraph Before["Window: indices 0–2"]
+    a0["[2]"] --- a1["[1]"] --- a2["[5]"] --- a3[3] --- a4[6]
+  end
+  subgraph After["Slide right: indices 1–3"]
+    b0[2] --- b1["[1]"] --- b2["[5]"] --- b3["[3]"] --- b4[6]
+  end
+```
+
 ## Problem 1: Maximum sum subarray of size K
 
 ```ts

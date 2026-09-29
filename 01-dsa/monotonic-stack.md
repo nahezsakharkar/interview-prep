@@ -19,6 +19,19 @@ A monotonic stack keeps its elements in sorted order (increasing or decreasing) 
 - Worst: O(n)
 - Space: O(n)
 
+## Visual example: next greater element
+
+Scanning right-to-left for `[2, 1, 3]`, discard stack values that cannot be the next greater value. The stack shown is from bottom to top.
+
+```mermaid
+flowchart LR
+  input["Current value: 1"] --> compare{"Top of stack > 1?"}
+  compare -->|yes| answer["Next greater = 3"]
+  compare -->|no| pop["Pop smaller/equal values"]
+  pop --> compare
+  answer --> push["Push 1; stack = [3, 1]"]
+```
+
 ## Problem 1: Daily temperatures
 
 ```ts

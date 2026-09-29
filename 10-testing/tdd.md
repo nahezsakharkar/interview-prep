@@ -24,6 +24,13 @@ It helps clarify requirements early and keeps code focused on verifiable behavio
 
 Write a failing test, implement the behavior, run the test, refactor, and repeat.
 
+```mermaid
+flowchart LR
+  red[Write a failing test] --> green[Implement the smallest passing change]
+  green --> refactor[Refactor while tests stay green]
+  refactor --> red
+```
+
 ## Code example
 
 ```ts

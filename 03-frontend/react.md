@@ -24,6 +24,16 @@ React is a dominant frontend tool for building reusable, modular interfaces and 
 
 React updates the UI by comparing the new virtual tree to the previous one and reconciling the smallest needed changes. Hooks allow state and lifecycle behavior in function components.
 
+```mermaid
+flowchart LR
+  update[State or props update] --> render[Render components]
+  render --> reconcile[Reconcile new and previous trees]
+  reconcile --> commit[Commit required DOM changes]
+  commit --> paint[Browser paints update]
+  commit --> effects[Run effects after commit]
+  effects -. external synchronization may update state .-> update
+```
+
 ## Code example
 
 ```tsx

@@ -24,6 +24,18 @@ This is the foundation of agentic AI systems: a model may plan, act, and reflect
 
 A planner or orchestrator chooses tools, executes them, interprets outputs, and decides whether more actions are needed.
 
+```mermaid
+flowchart TD
+  goal[User goal] --> model[Model selects next step]
+  model --> check{Tool needed and allowed?}
+  check -->|No| final[Return final response]
+  check -->|Yes| tool[Call tool with validated arguments]
+  tool --> result[Observe tool result]
+  result --> verify{Goal complete?}
+  verify -->|No| model
+  verify -->|Yes| final
+```
+
 ## Code example
 
 ```ts

@@ -24,6 +24,17 @@ This is core for senior and staff engineering interviews. It tests how you reaso
 
 You identify business requirements, estimate load, define APIs, choose storage and compute patterns, and then analyze bottlenecks and resilience.
 
+```mermaid
+flowchart TD
+  req[Clarify requirements and constraints] --> estimate[Estimate load and data]
+  estimate --> contracts[Define APIs and data model]
+  contracts --> arch[Choose architecture and components]
+  arch --> analyze[Analyze bottlenecks, failures, and trade-offs]
+  analyze --> meets{Meets the requirements?}
+  meets -->|No: revise assumptions| estimate
+  meets -->|Yes| validate[Validate and present the design]
+```
+
 ## Code example
 
 ```ts

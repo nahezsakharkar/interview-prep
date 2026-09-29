@@ -24,6 +24,17 @@ They help teams scale and deliver features independently, though they increase o
 
 Each service owns a bounded domain, communicates through APIs, and often relies on service discovery, observability, and deployment automation.
 
+```mermaid
+flowchart LR
+  client[Client] --> gateway[API gateway]
+  gateway --> orders[Order service]
+  gateway --> catalog[Catalog service]
+  orders --> orderdb[(Orders database)]
+  catalog --> catalogdb[(Catalog database)]
+  orders -. publish domain event .-> broker[(Message broker)]
+  broker --> worker[Async consumer]
+```
+
 ## Code example
 
 ```yaml

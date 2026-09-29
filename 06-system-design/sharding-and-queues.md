@@ -38,8 +38,18 @@ Queues separate producers from consumers and decouple latency-sensitive requests
 
 ## Example
 
-```text
-API -> Queue -> Worker -> DB
+```mermaid
+flowchart LR
+	api[API] -->|hash or tenant key| router[Shard router]
+	router --> shard1[(Shard 1)]
+	router --> shard2[(Shard 2)]
+	router --> shard3[(Shard 3)]
+	api -->|async job| queue[(Queue)]
+	queue --> worker[Worker]
+	worker --> service[Downstream processing]
+	service -->|retryable failure| retry[Retry with backoff]
+	retry --> queue
+	service -->|permanent failure| dlq[(Dead-letter queue)]
 ```
 
 ## Interview guidance

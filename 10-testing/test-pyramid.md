@@ -24,6 +24,16 @@ It helps keep a test suite fast and valuable while still validating user-facing 
 
 Unit tests cover logic cheaply, integration tests validate component interactions, and E2E tests confirm real workflows and user experience.
 
+The pyramid narrows upward: tests generally become broader and more expensive as their scope increases.
+
+```mermaid
+flowchart TD
+  e2e["E2E: few, broad, slower"]
+  integration["Integration: some, component boundaries"]
+  unit["Unit: many, focused, fast"]
+  e2e --> integration --> unit
+```
+
 ## Code example
 
 ```ts

@@ -19,6 +19,17 @@ Binary search works on sorted data by repeatedly halving the search space. It is
 - Worst: O(log n)
 - Space: O(1)
 
+## Visual example: first true boundary
+
+Binary search can find the first `true` value when a predicate changes monotonically from false to true.
+
+```mermaid
+flowchart LR
+  f1["false"] --> f2["false"] --> f3["false"] --> t1["first true"] --> t2["true"] --> t3["true"]
+  mid["Evaluate predicate(mid)"] -->|false| higher[Search to the right]
+  mid -->|true| lower[Search mid or to the left]
+```
+
 ## Problem 1: Search in sorted array
 
 ```ts

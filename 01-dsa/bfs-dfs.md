@@ -12,6 +12,25 @@ last_reviewed: 2026-09-30
 
 Breadth-first search (BFS) explores level by level. Depth-first search (DFS) explores as deep as possible before backtracking. Both are standard for tree and graph traversal.
 
+## Visual example
+
+For this graph, assume neighbors are visited alphabetically. BFS visits the nearest layer first; recursive DFS follows one branch before backtracking.
+
+```mermaid
+flowchart LR
+  subgraph G["Example graph"]
+    A((A)) --- B((B))
+    A --- C((C))
+    B --- D((D))
+    B --- E((E))
+    C --- F((F))
+  end
+  bfs["BFS order: A, B, C, D, E, F"]
+  dfs["DFS order: A, B, D, E, C, F"]
+```
+
+The traversal sequences assume neighbors are explored alphabetically; a different adjacency order can change DFS order.
+
 ## Typical complexity
 
 - Graph traversal: O(V + E)
