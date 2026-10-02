@@ -124,7 +124,7 @@ function findWords(board: string[][], words: string[]): string[] {
     const updatedWord = word + ch;
     if (next.isEnd) {
       result.add(updatedWord);
-      // Optimization: we could mark next.isEnd = false if we only need one instance
+      // Optimization: mark next.isEnd = false if we only need one instance of each word
     }
 
     board[r][c] = '#'; // Mark as visited
@@ -156,6 +156,7 @@ function findWords(board: string[][], words: string[]): string[] {
 - **Runtime mismatch**: Using a `Map` as a plain object (`node[ch]`), which leads to `undefined` or runtime errors in TS.
 - **Boundary conditions**: Not handling empty boards or empty target strings.
 - **Backtracking**: Forgetting to unmark visited cells when exploring alternative paths in Word Search.
+- **Trie Structure**: Forgetting that `search()` must check `isEnd`, while `startsWith()` only checks if the path exists.
 
 ## Related notes
 

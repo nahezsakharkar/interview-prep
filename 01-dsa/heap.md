@@ -135,16 +135,19 @@ function kthLargest(nums: number[], k: number): number {
 
 ## Problem 2: Merge k sorted lists
 
-We use a min-heap to keep track of the smallest current element among all $K$ lists.
+We use a min-heap to keep track of the smallest current element among all $K$ lists. This ensures that we always extract the global minimum in $O(\log k)$ time.
 
 ```ts
 function mergeKSortedLists(lists: number[][]): number[] {
+  // Heap stores: [value, listIndex, itemIndex]
   const heap = new MinHeap<[number, number, number]>((a, b) => a[0] - b[0]);
   const output: number[] = [];
 
-  // Initial push: first element of each list
+  // Initial push: first element of each non-empty list
   for (let i = 0; i < lists.length; i++) {
-    if (lists[i].length) heap.push([lists[i][0], i, 0]);
+    if (lists[i].length > 0) {
+      heap.push([lists[i][0], i, 0]);
+    }
   }
 
   while (heap.size() > 0) {
@@ -160,7 +163,7 @@ function mergeKSortedLists(lists: number[][]): number[] {
   return output;
 }
 ```
-**Complexity:** Time: $O(n \log k)$ where $n$ is total elements. Space: $O(k)$.
+**Complexity:** Time: $O(n \log k)$ where $n$ is the total number of elements across all lists. Space: $O(k)$ to store the heap.
 
 ## Problem 3: Top k frequent elements
 

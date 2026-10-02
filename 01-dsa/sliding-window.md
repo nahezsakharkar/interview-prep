@@ -3,7 +3,7 @@ title: "Sliding window"
 tags: ["dsa","sliding-window"]
 difficulty: medium
 status: learning
-last_reviewed: 2026-09-30
+last_reviewed: 2026-10-02
 ---
 
 # Sliding window
@@ -14,10 +14,10 @@ Sliding window maintains a moving range over an array or string and updates it a
 
 ## Typical complexity
 
-- Best: O(n)
-- Average: O(n)
-- Worst: O(n)
-- Space: O(1) to O(k) depending on the state tracked
+- Best: $O(n)$
+- Average: $O(n)$
+- Worst: $O(n)$
+- Space: $O(1)$ to $O(k)$ depending on the state tracked
 
 ## Visual example: fixed-size window
 
@@ -37,6 +37,8 @@ flowchart LR
 
 ```ts
 function maxSumSubarray(nums: number[], k: number): number {
+  if (nums.length < k) return 0;
+  
   let windowSum = 0;
   for (let i = 0; i < k; i++) {
     windowSum += nums[i];
@@ -52,7 +54,7 @@ function maxSumSubarray(nums: number[], k: number): number {
 }
 ```
 
-Time: O(n), space: O(1).
+Time: $O(n)$, space: $O(1)$.
 
 ## Problem 2: Longest substring without repeating characters
 
@@ -65,6 +67,7 @@ function lengthOfLongestSubstring(s: string): number {
   for (let right = 0; right < s.length; right++) {
     const ch = s[right];
     if (seen.has(ch)) {
+      // Update left to be one position after the last occurrence of ch
       left = Math.max(left, seen.get(ch)! + 1);
     }
     seen.set(ch, right);
@@ -75,7 +78,7 @@ function lengthOfLongestSubstring(s: string): number {
 }
 ```
 
-Time: O(n), space: O(min(n, k)) where k is the alphabet size or distinct characters.
+Time: $O(n)$, space: $O(\min(n, k))$ where $k$ is the alphabet size or distinct characters.
 
 ## Problem 3: Minimum window substring
 
@@ -126,13 +129,14 @@ function minWindow(s: string, t: string): string {
 }
 ```
 
-Time: O(n), space: O(k) for the target character map.
+Time: $O(n)$, space: $O(k)$ for the target character map.
 
 ## Common mistakes
 
-- Forgetting to shrink the window after it becomes valid.
-- Recomputing the window sum from scratch instead of using the moving invariant.
-- Not tracking current counts when multiple characters repeat.
+- **Forgetting to shrink the window**: Not using a `while` loop to shrink the window after it becomes valid in variable-size window problems.
+- **Recomputing the window sum**: Re-summing the whole window on every slide instead of updating via the moving invariant.
+- **Off-by-one errors**: Incorrectly calculating the window length (`right - left + 1`).
+- **Empty target handling**: Not checking for empty strings `s` or `t` at the start of the function.
 
 ## Related notes
 
