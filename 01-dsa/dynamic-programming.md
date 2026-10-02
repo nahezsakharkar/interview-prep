@@ -75,6 +75,7 @@ Time: O(n), space: O(1).
 ```ts
 function longestPalindromicSubsequence(s: string): number {
   const n = s.length;
+  if (n === 0) return 0;
   const dp = Array.from({ length: n }, () => Array(n).fill(0));
 
   for (let i = n - 1; i >= 0; i--) {

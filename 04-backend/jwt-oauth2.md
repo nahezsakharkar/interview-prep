@@ -14,10 +14,10 @@ JWT is a signed token containing claims. It is commonly used to carry identity a
 
 ### Key security concerns
 
-- Validate signature and issuer
-- Keep secret or signing keys secure
-- Set appropriate expiration and refresh flows
-- Do not store sensitive data in the token payload unless needed
+- **Signed $\neq$ Encrypted**: Standard JWTs are Base64Url encoded and signed. The payload is **completely readable** by anyone who intercepts the token. Never store sensitive data (passwords, PII, secrets) in the payload.
+- Validate signature and issuer.
+- Keep secret or signing keys secure.
+- Set appropriate expiration and refresh flows.
 
 ## OAuth2
 

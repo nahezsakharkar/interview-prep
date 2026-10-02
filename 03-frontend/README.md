@@ -18,8 +18,9 @@ This section covers the frontend concepts that most often appear in interviews: 
 - [Next.js rendering](nextjs-rendering.md) — SSR, SSG, ISR, caching, streaming, and revalidation trade-offs
 - [Hooks and useEffect](hooks-and-useeffect.md)
 - [Memoization and state](memoization-and-state.md)
-- [Next.js rendering](nextjs-rendering.md)
 - [Core Web Vitals](core-web-vitals.md)
+- [Vue and Nuxt.js](vue-nuxt.md) — Reactivity, SSR, and framework comparison
+- [Micro-frontends and design systems](micro-frontends-design-systems.md) — Module federation and component libraries
 
 ## Key interview themes
 

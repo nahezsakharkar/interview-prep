@@ -81,6 +81,7 @@ Time: O(n), space: O(min(n, k)) where k is the alphabet size or distinct charact
 
 ```ts
 function minWindow(s: string, t: string): string {
+  if (t.length === 0) return '';
   if (t.length > s.length) return '';
 
   const need = new Map<string, number>();

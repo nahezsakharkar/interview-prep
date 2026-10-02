@@ -23,6 +23,11 @@ This section focuses on scalable architecture thinking, trade-off analysis, and 
 - [Notification system](notification-system.md)
 - [News feed](news-feed.md)
 - [E-commerce platform](e-commerce.md)
+- [Payment system](case-study-payments.md)
+- [File storage system](case-study-file-storage.md)
+- [Search autocomplete](case-study-autocomplete.md)
+- [Ride-hailing system](case-study-ride-hailing.md)
+- [Video streaming system](case-study-video-streaming.md)
 
 ## Interview habits
 

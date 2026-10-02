@@ -44,7 +44,7 @@ This repository is a personal, Markdown-only knowledge base for preparing for so
 
 Check a section after reviewing its notes and completing relevant practice. This tracks personal revision progress, not whether a folder exists.
 
-- [ ] [01-dsa](01-dsa/README.md)
+- [ ] [01-dsa](01-dsa/README.md) — arrays/hashing, linked lists, Dijkstra, and topological sort added; more patterns and fixes pending
 - [ ] [02-languages](02-languages/README.md) — JavaScript and TypeScript notes expanded; Java and Python remain pending
 - [ ] [03-frontend](03-frontend/README.md) — React and Next.js core notes expanded; testing and other frontend gaps remain
 - [ ] [04-backend](04-backend/README.md)

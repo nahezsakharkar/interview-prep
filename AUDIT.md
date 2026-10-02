@@ -20,7 +20,7 @@ The repository is a navigable Markdown starter library with broad introductory c
 
 | Section | Score / 100 | Readiness | Summary |
 | --- | ---: | --- | --- |
-| 01 DSA | 40 | Low | Several useful pattern introductions; major requested topics absent, no LeetCode catalog, and some code/complexity defects. |
+| 01 DSA | 62 | Low | Arrays/hashing, linked lists, Dijkstra, topological sort, BST, greedy, intervals, sorting, bit-manipulation, and core DP pattern notes added in batches 13–18; other requested patterns, LeetCode catalog, and code fixes remain. |
 | 02 Languages | 40 | Low | JavaScript and TypeScript notes expanded in batch 6; Java remains shallow and Python is absent. |
 | 03 Frontend | 48 | Low | React and Next.js core notes strengthened in batches 7–8; testing, security, Vue/Nuxt, React Native, design systems, micro-frontends, SASS, motion, and other candidate UI topics remain shallow or missing. |
 | 04 Backend | 35 | Low | Spring/REST/auth/caching/messaging notes exist; Node, Python backend, GraphQL, and in-depth Spring security/JPA are missing. |
@@ -47,19 +47,19 @@ Grades apply to repository coverage, not candidate skill. Paths in the tables ar
 
 | Topic | File path | Grade | What's missing |
 | --- | --- | --- | --- |
-| Arrays | `01-dsa/patterns-overview.md` | SHALLOW | No dedicated array patterns, prefix sums, or array-specific problem set. |
+| Arrays | `01-dsa/arrays-and-hashing.md` | ADEQUATE | Array/hash fundamentals, Two Sum, complexity, edge cases, and Q&A covered; prefix-sum patterns and broad practice set remain. |
 | Strings | `01-dsa/sliding-window.md`, `01-dsa/two-pointers.md` | SHALLOW | A few string examples only; no parsing, frequency, or broader string techniques. |
-| Hashing | `01-dsa/sliding-window.md`, `01-dsa/union-find.md` | SHALLOW | Maps/sets used incidentally; no hash table behavior, collision model, or common patterns. |
-| Linked lists | — | MISSING | No linked-list note or linked-node solutions. |
+| Hashing | `01-dsa/arrays-and-hashing.md` | ADEQUATE | Expected vs worst-case lookup and frequency/set use are covered; deeper collision-resolution/runtime details remain. |
+| Linked lists | `01-dsa/linked-lists.md` | ADEQUATE | Operations, reverse in TS/Java, dry run, cycle detection concept, complexity, and Q&A covered; broader linked-list problem set remains. |
 | Stacks | `01-dsa/monotonic-stack.md` | SHALLOW | Monotonic stack examples only; no general stack operations/applications. |
 | Queues | `01-dsa/bfs-dfs.md` | SHALLOW | Queue appears in BFS; no queue/deque implementation and complexity note. |
 | Trees | `01-dsa/tree-traversal.md`, `01-dsa/bfs-dfs.md` | ADEQUATE | Traversal overview; limited tree construction/recursion examples and traversal implementation has complexity concern. |
-| BST | — | MISSING | No BST invariant, search/insert/delete, validation, or successor/predecessor. |
+| BST | `01-dsa/binary-search-tree.md` | ADEQUATE | BST invariant, search/insert/delete, complexity, and Q&A covered; balancing strategies and deeper tree-rotation problems remain. |
 | Heaps | `01-dsa/heap.md` | SHALLOW | Concept exists; examples simulate a heap using sort/shift, not heap operations. |
 | Tries | `01-dsa/trie.md` | SHALLOW | Insert/search and word search examples; trie API incomplete and Word Search II code is defective. |
-| Graph BFS/DFS | `01-dsa/bfs-dfs.md` | ADEQUATE | BFS/DFS examples are present; JS `Array.shift()` makes claimed linear traversal complexity inaccurate for these implementations. |
-| Dijkstra | — | MISSING | No weighted shortest path. |
-| Topological sort | — | MISSING | No Kahn/DFS ordering or course-schedule example. |
+| Graph BFS/DFS | `01-dsa/bfs-dfs.md` | ADEQUATE | BFS/DFS examples now use a head-index queue for linear traversal; recursive DFS stack depth remains a constraint. |
+| Dijkstra | `01-dsa/graph-algorithms.md` | ADEQUATE | Non-negative weighted paths, O(V²+E) scan implementation in TS/Java, edge cases, and Q&A covered; heap version remains a variation. |
+| Topological sort | `01-dsa/graph-algorithms.md` | ADEQUATE | Kahn's algorithm in TS/Java with cycle detection, complexity, and Q&A; DFS variant remains a comparison. |
 | Union-find | `01-dsa/union-find.md` | ADEQUATE | Components/cycle/account merge; rank/size consistency and complexity description require attention. |
 | Recursion | `01-dsa/backtracking.md`, `01-dsa/tree-traversal.md` | ADEQUATE | Demonstrated in examples; no general recursion/base-case note. |
 | Backtracking | `01-dsa/backtracking.md` | ADEQUATE | Subsets, permutations, N-Queens; limited dry runs and pruning analysis. |
@@ -68,7 +68,13 @@ Grades apply to repository coverage, not candidate skill. Paths in the tables ar
 | Knapsack | — | MISSING | No 0/1 or unbounded knapsack. |
 | LCS | — | MISSING | No Longest Common Subsequence. |
 | LIS | — | MISSING | No Longest Increasing Subsequence. |
-| Greedy | — | MISSING | No greedy proof or representative problems. |
+| Greedy | `01-dsa/greedy.md` | ADEQUATE | Earliest-finish-time activity selection, proof role, and Q&A covered; more greedy variants remain. |
+| Intervals | `01-dsa/intervals.md` | ADEQUATE | Merge overlap and insert-interval patterns covered; scheduling-extension variants remain. |
+| Sorting algorithms | `01-dsa/sorting.md` | ADEQUATE | Merge sort, quick sort, complexity matrix, and Q&A covered; more specialized integer-sorting variants remain. |
+| Bit manipulation | `01-dsa/bit-manipulation.md` | ADEQUATE | Bitwise operators, masks, set-count, and power-of-two checks covered; more advanced bitmask problems remain. |
+| Knapsack | `01-dsa/knapsack-lcs-lis.md` | ADEQUATE | 0/1 knapsack and dynamic-programming recurrence covered; unbounded and optimization variants remain. |
+| LCS | `01-dsa/knapsack-lcs-lis.md` | ADEQUATE | Prefix-DP recurrence and examples covered; reconstruction and edge-case variants remain. |
+| LIS | `01-dsa/knapsack-lcs-lis.md` | ADEQUATE | O(n²) DP and O(n log n) optimization introduced; practice set remains. |
 | Sliding window | `01-dsa/sliding-window.md` | ADEQUATE | Three patterns; minimum-window code fails for empty target. |
 | Two pointers | `01-dsa/two-pointers.md` | ADEQUATE | Sorted pair, dedupe, palindrome; palindrome behavior differs from common punctuation/case-insensitive variant. |
 | Binary search | `01-dsa/binary-search.md` | ADEQUATE | Exact search, insertion point, first bad version; no rotated/search-on-answer practice. |
@@ -360,7 +366,7 @@ Naming appears mostly lowercase kebab-case. Specific exceptions/consistency risk
 | Priority | File / location | Finding |
 | --- | --- | --- |
 | P0 | `01-dsa/heap.md`, “Merge k sorted lists” | Repeatedly sorting an array and shifting does not achieve the claimed O(n log k); it is not a linked-list implementation. Kth-largest similarly simulates a heap using sort/shift. |
-| P0 | `01-dsa/bfs-dfs.md`, queue loops | JavaScript `Array.shift()` is linear in remaining elements in typical engines; the examples' claimed O(V+E) can become quadratic. Use a queue head index/deque. |
+| Resolved in batch 14 | `01-dsa/bfs-dfs.md`, queue loops | Replaced `Array.shift()` with head-index queues in both BFS examples, preserving O(V+E) traversal work. |
 | P0 | `01-dsa/sliding-window.md`, `minWindow` | Empty `t` makes `required === have === 0`; the shrinking loop can fail to terminate. |
 | P0 | `01-dsa/trie.md`, `findWords` | Uses `Map` with object-property access (`node[ch]`, `node.isEnd`), a TypeScript type/runtime mismatch; empty board is not handled. The Trie class omits `startsWith`. |
 | P0 | `01-dsa/dynamic-programming.md`, LPS | Empty string accesses `dp[0][n - 1]`; returns undefined instead of 0. |
@@ -394,11 +400,11 @@ Naming appears mostly lowercase kebab-case. Specific exceptions/consistency risk
 
 ### P0 — likely asked, missing or correctness blockers
 
-1. Repair incorrect/unbounded algorithm examples: heap examples and complexity, BFS queue complexity, `minWindow` empty target, trie `Map` misuse/empty board, LPS empty input, and two-sum visual/contract alignment.
+1. Repair remaining incorrect/unbounded algorithm examples: heap examples and complexity, `minWindow` empty target, trie `Map` misuse/empty board, LPS empty input, and two-sum visual/contract alignment. BFS queue front-removal was fixed in batch 14.
 2. Correct system-design request estimator and CAP explanation; add PACELC and explicit consistency trade-offs.
 3. Fix JWT guidance so signed-but-unencrypted payloads are treated as readable; provide verified auth flow examples and distinguish authn/authz/session/OAuth2.
 4. Add candidate-specific `/resume-deep-dive/` notes only from verified resume facts; include diagrams, alternatives, metrics method/baseline/source/period/attribution and follow-ups for each of the nine named projects.
-5. Add DSA missing high-frequency structures/algorithms: linked lists, arrays/hashing, BST, Dijkstra, topological sort, greedy, interval merging, sorting, bit manipulation, knapsack/LCS/LIS.
+5. Add DSA missing high-frequency structures/algorithms: remaining arrays/linked-list problem practice and deeper DP optimization/edge-case variants. BST, greedy, intervals, sorting, bit manipulation, and knapsack/LCS/LIS were added in batches 15–18.
 6. Add actual Blind 75 / NeetCode 150 index and solve/tracking plan. Current examples cover only 19 titles, three incompletely.
 7. Add requested system-design cases: chat, news feed, e-commerce, file storage, payments, autocomplete, ride-hailing, video streaming; expand existing URL shortener and notification designs with estimates, APIs, data models, bottlenecks, reliability, security and trade-offs.
 8. Add candidate differentiator coverage: KaizenLang/custom DSL schema, LLM-driven generative UI, live API orchestration, token efficiency/streaming/JSON-vs-DSL, and Java/React integration.
@@ -481,22 +487,23 @@ Paths below are proposed only; no files beyond this audit have been created.
 | 3 | When is sliding window appropriate, and why must its range be contiguous? | Partial | [Sliding window](01-dsa/sliding-window.md) |
 | 4 | How do you find the first true value in a monotonic predicate? | Partial | [Binary search](01-dsa/binary-search.md) |
 | 5 | Compare BFS and DFS; when does BFS give a shortest path? | Partial | [BFS / DFS](01-dsa/bfs-dfs.md) |
-| 6 | How does Dijkstra differ from BFS? | No | Missing weighted graph algorithms. |
-| 7 | How do you topologically sort a directed acyclic graph? | No | Missing topological sort. |
+| 6 | How does Dijkstra differ from BFS? | Yes | [Graph algorithms](01-dsa/graph-algorithms.md) |
+| 7 | How do you topologically sort a directed acyclic graph? | Yes | [Graph algorithms](01-dsa/graph-algorithms.md) |
 | 8 | Explain union-find with path compression and union by rank. | Partial | [Union find](01-dsa/union-find.md) |
 | 9 | How do you decide a DP state and transition? | Partial | [Dynamic programming](01-dsa/dynamic-programming.md) |
 | 10 | Explain 0/1 knapsack and its state transition. | No | Missing knapsack. |
 | 11 | How do LCS and LIS differ? | No | Missing LCS/LIS. |
-| 12 | How do you prove a greedy choice is safe? | No | Missing greedy. |
-| 13 | How do you merge overlapping intervals? | No | Missing intervals. |
+| 12 | How do you prove a greedy choice is safe? | Yes | [Greedy algorithms](01-dsa/greedy.md) |
+| 13 | How do you merge overlapping intervals? | Yes | [Intervals and merge](01-dsa/intervals.md) |
 | 14 | How does a binary heap maintain its invariant? | Partial | [Heap](01-dsa/heap.md); code examples do not use a real heap. |
 | 15 | When is a trie preferable to a hash map? | Partial | [Trie](01-dsa/trie.md) |
-| 16 | How do you reverse a linked list in-place? | No | Missing linked lists. |
-| 17 | How do you detect a linked-list cycle? | No | Missing linked lists. |
-| 18 | How do hash collisions affect lookup and complexity? | No | No hashing note. |
-| 19 | Compare common sorting algorithms by stability and complexity. | No | Missing sorting. |
-| 20 | Explain bit masks and test/set/clear a bit. | No | Missing bit manipulation. |
-| 21 | How do React render, reconciliation, and commit differ? | Yes | [React notes](03-frontend/react.md), [rendering and reconciliation](03-frontend/rendering-and-reconciliation.md) |
+| 16 | How do you reverse a linked list in-place? | Yes | [Linked lists](01-dsa/linked-lists.md) |
+| 17 | How do you detect a linked-list cycle? | Yes | [Linked lists](01-dsa/linked-lists.md) |
+| 18 | How do hash collisions affect lookup and complexity? | Partial | [Arrays and hashing](01-dsa/arrays-and-hashing.md); implementation-specific collision handling still needs deeper study. |
+| 19 | Compare common sorting algorithms by stability and complexity. | Yes | [Sorting algorithms](01-dsa/sorting.md) |
+| 20 | Explain bit masks and test/set/clear a bit. | Yes | [Bit manipulation](01-dsa/bit-manipulation.md) |
+| 21 | Explain 0/1 knapsack, LCS, and LIS state transitions. | Yes | [Knapsack, LCS, and LIS](01-dsa/knapsack-lcs-lis.md) |
+| 22 | How do React render, reconciliation, and commit differ? | Yes | [React notes](03-frontend/react.md), [rendering and reconciliation](03-frontend/rendering-and-reconciliation.md) |
 | 22 | What causes a React component to render again? | Yes | [React notes](03-frontend/react.md), [rendering and reconciliation](03-frontend/rendering-and-reconciliation.md) |
 | 23 | Why do list keys matter, and why can array indices be unsafe? | Yes | [React notes](03-frontend/react.md), [rendering and reconciliation](03-frontend/rendering-and-reconciliation.md) |
 | 24 | When should you use `useEffect`, and when should you avoid it? | Partial | [Hooks and useEffect](03-frontend/hooks-and-useeffect.md) |
@@ -579,4 +586,4 @@ Paths below are proposed only; no files beyond this audit have been created.
 
 ## 8. Audit conclusion and phase boundary
 
-This report began as a Phase 1 gap analysis. Phase 2 is proceeding in user-approved batches; batches 1–5 added the resume-deep-dive index, nine evidence-safe project scaffolds, and a metric evidence checklist; batch 6 expanded JavaScript/TypeScript; batch 7 expanded React rendering/reconciliation; batch 8 expanded Next.js App Router and rendering notes; batch 9 expanded system-design fundamentals and scalability; batch 10 expanded URL shortener and chat; batch 11 expanded notification and news-feed; batch 12 added the generic e-commerce case. All unknown resume facts remain TODO placeholders. Continue only when the candidate replies `next`.
+This report began as a Phase 1 gap analysis. Phase 2 is proceeding in user-approved batches; batches 1–5 added the resume-deep-dive index, nine evidence-safe project scaffolds, and a metric evidence checklist; batch 6 expanded JavaScript/TypeScript; batch 7 expanded React rendering/reconciliation; batch 8 expanded Next.js App Router and rendering notes; batch 9 expanded system-design fundamentals and scalability; batch 10 expanded URL shortener and chat; batch 11 expanded notification and news-feed; batch 12 added the generic e-commerce case; batch 13 added arrays/hashing and linked lists; batch 14 added Dijkstra/topological sort and fixed BFS queue complexity; batch 15 added BST and greedy notes; batch 16 added intervals and sorting notes; batch 17 added bit manipulation; batch 18 added core knapsack/LCS/LIS patterns. All unknown resume facts remain TODO placeholders. Continue only when the candidate replies `next`.

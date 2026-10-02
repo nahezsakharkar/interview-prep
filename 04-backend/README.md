@@ -16,6 +16,7 @@ This section emphasizes Java, Spring Boot, API design, reliability, and the back
 - [REST design](rest-design.md)
 - [JWT and OAuth2](jwt-oauth2.md)
 - [Transactions and N+1](transactions-and-n-plus-one.md)
+- [Node.js and GraphQL](nodejs-graphql.md) — Event loop, streams, and GraphQL resolvers
 
 ## High-value topics
 

@@ -56,13 +56,14 @@ function levelOrder(root: TreeNode | null): number[][] {
 
   const result: number[][] = [];
   const queue: Array<TreeNode> = [root];
+  let head = 0;
 
-  while (queue.length) {
-    const levelSize = queue.length;
+  while (head < queue.length) {
+    const levelSize = queue.length - head;
     const level: number[] = [];
 
     for (let i = 0; i < levelSize; i++) {
-      const node = queue.shift()!;
+      const node = queue[head++];
       level.push(node.val);
       if (node.left) queue.push(node.left);
       if (node.right) queue.push(node.right);
@@ -114,12 +115,14 @@ function numIslands(grid: string[][]): number {
 
 ```ts
 function shortestPath(graph: number[][], start: number, end: number): number[] {
+  if (start < 0 || start >= graph.length || end < 0 || end >= graph.length) return [];
   const queue: number[] = [start];
+  let head = 0;
   const prev = new Array(graph.length).fill(-1);
   prev[start] = start;
 
-  while (queue.length) {
-    const node = queue.shift()!;
+  while (head < queue.length) {
+    const node = queue[head++];
     if (node === end) break;
 
     for (const neighbor of graph[node]) {

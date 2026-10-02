@@ -2,15 +2,15 @@
 title: "Trie"
 tags: ["dsa","trie"]
 difficulty: medium
-status: learning
-last_reviewed: 2026-09-30
+status: revised
+last_reviewed: 2026-10-02
 ---
 
 # Trie
 
 ## Definition
 
-A trie is a tree-like structure used for efficient prefix-based lookup. It is especially useful in dictionaries, autocomplete, and prefix matching tasks.
+A trie (prefix tree) is a specialized tree-like data structure used for efficient retrieval of keys in a large dataset of strings. It is especially useful in dictionaries, autocomplete, and prefix matching tasks.
 
 ## Visual example
 
@@ -26,10 +26,10 @@ flowchart LR
 
 ## Typical complexity
 
-- Insert: O(L)
-- Search: O(L)
-- Prefix check: O(L)
-- Space: O(total characters)
+- Insert: $O(L)$
+- Search: $O(L)$
+- Prefix check: $O(L)$
+- Space: $O(N \cdot L)$ where $N$ is the number of words and $L$ is average length.
 
 ## Problem 1: Implement trie
 
@@ -68,6 +68,15 @@ class Trie {
     }
     return node.isEnd;
   }
+
+  startsWith(prefix: string): boolean {
+    let node = this.root;
+    for (const ch of prefix) {
+      if (!node.children.has(ch)) return false;
+      node = node.children.get(ch)!;
+    }
+    return true;
+  }
 }
 ```
 
@@ -91,48 +100,50 @@ function longestCommonPrefix(words: string[]): string {
 
 ## Problem 3: Word search II
 
+Corrected implementation using the Trie class for runtime safety and correctness.
+
 ```ts
 function findWords(board: string[][], words: string[]): string[] {
-  const trie = new Map<string, any>();
+  if (!board.length || !board[0].length) return [];
+  
+  const trie = new Trie();
   for (const word of words) {
-    let node = trie;
-    for (const ch of word) {
-      if (!node[ch]) node[ch] = {};
-      node = node[ch];
-    }
-    node.isEnd = true;
+    trie.insert(word);
   }
 
   const rows = board.length;
   const cols = board[0].length;
   const result = new Set<string>();
-  const visited = new Set<string>();
 
-  const dfs = (r: number, c: number, node: any, word: string) => {
-    if (node.isEnd) result.add(word);
-    if (r < 0 || c < 0 || r >= rows || c >= cols) return;
-    const key = `${r},${c}`;
-    if (visited.has(key)) return;
-    visited.add(key);
-
+  const dfs = (r: number, c: number, node: TrieNode, word: string) => {
     const ch = board[r][c];
-    const next = node[ch];
-    if (!next) {
-      visited.delete(key);
-      return;
+    const next = node.children.get(ch);
+    
+    if (!next) return;
+
+    const updatedWord = word + ch;
+    if (next.isEnd) {
+      result.add(updatedWord);
+      // Optimization: we could mark next.isEnd = false if we only need one instance
     }
 
+    board[r][c] = '#'; // Mark as visited
+    
     const directions = [[1,0],[-1,0],[0,1],[0,-1]];
     for (const [dr, dc] of directions) {
-      dfs(r + dr, c + dc, next, word + ch);
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+        dfs(nr, nc, next, updatedWord);
+      }
     }
-
-    visited.delete(key);
+    
+    board[r][c] = ch; // Backtrack
   };
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      dfs(r, c, trie, '');
+      dfs(r, c, trie.root, '');
     }
   }
 
@@ -142,9 +153,9 @@ function findWords(board: string[][], words: string[]): string[] {
 
 ## Common mistakes
 
-- Using a map or array without accounting for the prefix tree structure.
-- Not distinguishing between a valid word and a prefix node.
-- Not pruning correctly during word-search traversal.
+- **Runtime mismatch**: Using a `Map` as a plain object (`node[ch]`), which leads to `undefined` or runtime errors in TS.
+- **Boundary conditions**: Not handling empty boards or empty target strings.
+- **Backtracking**: Forgetting to unmark visited cells when exploring alternative paths in Word Search.
 
 ## Related notes
 

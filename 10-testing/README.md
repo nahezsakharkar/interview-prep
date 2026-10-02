@@ -17,6 +17,8 @@ This section covers the testing pyramid, interview-ready quality practices, and 
 - [Integration testing](integration-testing.md) — service-to-service verification and containerized stacks
 - [E2E testing](e2e.md) — user flows, test stability, and automation strategy
 - [TDD workflow](tdd.md) — write failing tests, implement, refactor, verify
+- [Frontend Testing Toolkit](frontend-testing.md) — Jest, RTL, Playwright, and Visual Regression
+- [Java Testing Frameworks](java-testing.md) — JUnit, Mockito, and Cucumber BDD
 
 ## Typical interview prompts
 
