@@ -1,87 +1,85 @@
 ---
-title: "Design Case Study: Search Autocomplete"
-tags: ["system-design","search","trie"]
+title: "System Design Case: Autocomplete (Typeahead)"
+tags: ["system-design","case-study","search"]
 difficulty: medium
-status: learning
+status: revised
 last_reviewed: 2026-10-02
 ---
 
-# Search Autocomplete Design
+# System Design Case: Autocomplete
 
-## 1. Requirements
+## Requirements
 
-### Functional
-- **Real-time Suggestions**: As the user types, provide the top $K$ most frequent suggestions.
-- **Low Latency**: Suggestions must appear almost instantaneously (typically < 100ms).
-- **Freshness**: Popular searches should trend and update the suggestion list.
-- **Personalization**: (Optional) Suggestions based on user history.
+### Functional requirements
+- **Suggestions**: As the user types, provide the top 5-10 most relevant suggestions.
+- **Real-time**: Suggestions must update in $<100\text{ms}$ to feel instantaneous.
+- **Ranking**: Suggestions should be ranked by popularity/frequency.
+- **Personalization**: (Optional) Prioritize suggestions based on user's past history.
 
-### Non-Functional
-- **High Availability**: Autocomplete is a critical entry point for search.
-- **Scalability**: Must handle millions of queries per second (QPS).
-- **Fault Tolerance**: If the suggestion service is down, the search box should still function.
+### Non-functional requirements
+- **Extremely Low Latency**: The bottleneck is the network; the search must be near-instant.
+- **High Availability**: Autocomplete is a high-traffic feature; it should not crash the main search.
+- **Scalability**: Support millions of queries per second.
 
-## 2. High-Level Architecture
+## Estimation
+- **Queries per second (QPS)**: 100k - 1M.
+- **Average query length**: 3-10 characters.
+- **Data size**: Millions of unique search terms.
+
+## API design
+
+### Endpoints
+| Method | Path | Purpose |
+| :--- | :--- | :--- |
+| GET | `/suggest?q=abc` | Return list of suggestions for prefix `abc` |
+
+## Data model
+
+- **Trie (The core structure)**: A Trie stores all possible search terms. Each node stores the frequency of the term passing through it.
+- **Cache**: Redis stores the top 10 results for the most common prefixes (e.g., "a", "ap", "app").
+
+## High-level architecture
 
 ```mermaid
-flowchart TD
-    User[User Browser] --> LB[Load Balancer]
-    LB --> API[Autocomplete API]
-    API --> Cache[Redis Cache]
-    Cache -- Miss --> TrieSrv[Trie Service]
-    TrieSrv --> TrieDB[(Trie Store)]
-    
-    Log[User Search Logs] --> Collector[Log Collector]
-    Collector --> Analyzer[Analytics Pipeline - Spark/Flink]
-    Analyzer --> TrieDB
+flowchart LR
+    User --> Browser[Browser / Client]
+    Browser --> Cache[Redis Cache]
+    Cache -- "Miss" --> TrieSvc[Trie Service]
+    TrieSvc --> TrieDB[(Trie Store)]
+    TrieDB --> TrieSvc
+    TrieSvc --> Cache
+    Cache --> Browser
+    TrieSvc --> Analytics[Analytics Pipeline]
+    Analytics --> TrieDB
 ```
 
-## 3. Deep Dive: The Data Structure
+## Deep dives
 
-The core of autocomplete is a **Trie (Prefix Tree)**. Each node stores:
-- The character.
-- The weight (frequency) of the most popular word in its subtree.
-- Pointers to children.
+### The Trie Data Structure
+A standard Trie is too large for memory if it stores every term.
+- **Optimization**: Instead of storing the full word at each node, store only the **Top 10 IDs** of the most popular words in that subtree.
+- **Result**: Search becomes $O(L)$ where $L$ is the length of the prefix, as the top suggestions are already pre-calculated and stored at the node.
 
-### Optimization: Pre-computing Top $K$
-Searching the entire subtree for the top $K$ words at request time is too slow ($O(\text{nodes in subtree})$). 
-- **Optimization**: Each node stores a pre-computed list of the **top $K$ words** that pass through it.
-- **Result**: Lookup time becomes $O(L)$ where $L$ is the length of the prefix, regardless of how many millions of words are in the Trie.
+### Ranking and Updates
+Search trends change (e.g., "World Cup" becomes popular for a month).
+- **Data Collection**: Every time a user selects a suggestion, an event is sent to a Kafka topic.
+- **Offline Aggregation**: A MapReduce/Spark job runs every hour to aggregate frequencies and update the weights in the Trie.
+- **Trie Update**: The updated Trie is pushed to the Trie Service servers in the background.
 
-## 4. Data Modeling & Storage
+### Latency Optimization
+- **Client-side Caching**: Cache the results for a prefix in the browser for a few minutes.
+- **Debouncing**: Don't send a request on every keystroke; wait for 100-200ms of inactivity.
+- **Edge Caching**: Use a CDN to cache common prefix results (e.g., "how to...") globally.
 
-### Trie Storage
-- **In-Memory**: For ultra-low latency, the Trie is kept in memory (e.g., using Redis or a distributed memory store).
-- **Persistence**: The Trie is periodically snapshotted to disk (S3/HDFS) and reloaded on startup.
+## Bottlenecks and trade-offs
 
-### Analytics Pipeline (Updating the Trie)
-We cannot update the Trie in real-time for every single keystroke.
-1. **Log Collection**: All searches are sent to a Kafka topic.
-2. **Aggregation**: A MapReduce or Spark job runs hourly/daily to aggregate counts.
-3. **Trie Update**: The aggregated counts are used to rebuild the Trie or update weights.
+- **Memory Usage**: A Trie with millions of terms is memory-intensive.
+- **Mitigation**: Use a **Compressed Trie (Radix Tree)** to merge nodes with only one child.
+- **Consistency vs Latency**: The Trie is updated hourly, meaning a new trending term takes an hour to appear.
+- **Trade-off**: Accept eventual consistency for the sake of sub-100ms response times.
 
-## 5. Trade-offs & Bottlenecks
+## Follow-up questions
 
-### Client-side vs. Server-side Caching
-- **Client-side**: Cache the last few prefixes typed by the user in the browser.
-- **Server-side**: Use a CDN or Redis to cache the top 10,000 most common global prefixes.
-
-### Memory Constraints
-If the Trie becomes too large for a single machine:
-- **Trie Sharding**: Partition the Trie by prefix (e.g., all words starting with 'a'-'m' on Server 1, 'n'-'z' on Server 2).
-
-## 6. Interview Q&A
-
-**Q: How do you handle "trending" searches (e.g., breaking news)?**
-**A**: Use a **Two-Tiered system**. A static Trie for long-term popular searches and a separate, smaller "Trending" cache (Redis) that is updated every few minutes from a stream processing pipeline (like Flink).
-
-**Q: How do you handle typos?**
-**A**: 
-1. **Edit Distance (Levenshtein)**: If no exact prefix match is found, search for words with an edit distance of 1 or 2.
-2. **Phonetic Matching**: Use algorithms like Soundex to find words that sound similar.
-
-## Related notes
-
-- [Trie](01-dsa/trie.md)
-- [Scalability basics](scalability-basics.md)
-- [Rate limiter](rate-limiter.md)
+- **How to handle typos?** — Use **Edit Distance (Levenshtein)** or fuzzy matching. If no results are found for "Applr", suggest "Apple".
+- **How to handle personalization?** — Merge the global Trie results with a user-specific history list stored in a fast KV store.
+- **How to handle multiple languages?** — Maintain separate Tries per language or use a Unicode-aware Trie implementation.

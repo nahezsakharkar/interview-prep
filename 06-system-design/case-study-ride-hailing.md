@@ -1,105 +1,90 @@
 ---
-title: "Design Case Study: Ride-Hailing System"
-tags: ["system-design","geospatial","real-time"]
+title: "System Design Case: Ride-Hailing (Uber/Lyft)"
+tags: ["system-design","case-study","real-time"]
 difficulty: hard
-status: learning
+status: revised
 last_reviewed: 2026-10-02
 ---
 
-# Ride-Hailing System Design (Uber/Lyft style)
+# System Design Case: Ride-Hailing
 
-## 1. Requirements
+## Requirements
 
-### Functional
-- **Ride Request**: User can request a ride by specifying pickup and drop-off locations.
-- **Driver Matching**: System matches the request with the nearest available drivers.
-- **Real-time Tracking**: User and driver can see each other's location in real-time.
-- **Pricing**: Dynamic pricing based on demand (surge pricing).
+### Functional requirements
+- **Request Ride**: User can specify pickup and destination; system matches them with the nearest available driver.
+- **Driver Availability**: Drivers can toggle their status (Online/Offline).
+- **Real-time Tracking**: Users can see the driver's location moving on the map in real-time.
+- **Fare Calculation**: System calculates price based on distance, traffic, and demand (surge pricing).
 - **Payment**: Automatic payment upon trip completion.
 
-### Non-Functional
+### Non-functional requirements
 - **Low Latency**: Matching must happen in seconds.
-- **High Availability**: The system must be available 24/7.
-- **Accuracy**: Geospatial queries must be precise.
-- **Scalability**: Support millions of concurrent drivers and riders across multiple cities.
+- **High Availability**: The system must be available 24/7; a failure in one region shouldn't affect others.
+- **Scalability**: Support millions of concurrent users and drivers.
+- **Consistency**: A driver cannot be matched to two riders simultaneously (Strong consistency for matching).
 
-## 2. High-Level Architecture
+## Estimation
+- **Daily Trips**: 10 Million.
+- **Peak Concurrent Users**: 1 Million.
+- **Driver Location Updates**: Every 3-5 seconds per active driver.
+- **Write Volume**: Millions of location updates per second $\rightarrow$ requires a highly optimized spatial index.
+
+## API design
+
+### Endpoints
+| Method | Path | Purpose |
+| :--- | :--- | :--- |
+| POST | `/ride/request` | Request a ride (userId, pickup, destination) |
+| PATCH | `/driver/status` | Toggle availability (driverId, status) |
+| GET | `/ride/track/{rideId}` | Get current driver location |
+| POST | `/ride/complete` | End trip and trigger payment |
+
+## Data model
+
+- **Users/Drivers**: SQL (PostgreSQL) for profile and billing data.
+- **Trips**: SQL for transactional integrity (RideId, RiderId, DriverId, Status, Fare).
+- **Driver Locations**: NoSQL / In-Memory (Redis) using **Geo-hashes** or **S2 Cells** for fast spatial queries.
+
+## High-level architecture
 
 ```mermaid
-flowchart TD
-    User[Rider App] --> LB[Load Balancer]
-    Driver[Driver App] --> LB
-    LB --> Gateway[API Gateway]
-    Gateway --> MatchSrv[Matching Service]
-    Gateway --> LocationSrv[Location Service]
-    Gateway --> PriceSrv[Pricing Service]
-    
-    LocationSrv --> GeoIndex[(Geospatial Index - Redis/S2)]
-    MatchSrv --> GeoIndex
-    MatchSrv --> DriverState[(Driver State DB)]
-    
-    LocationSrv --> Stream[Kafka Stream]
-    Stream --> Analytics[Surge Pricing Engine]
-    Analytics --> PriceSrv
+flowchart LR
+    Rider --> Gateway[API Gateway]
+    Driver --> Gateway
+    Gateway --> RideService[Ride Matching Service]
+    Gateway --> LocationService[Location Tracking Service]
+    LocationService --> GeoIndex[(Redis Geo)]
+    RideService --> GeoIndex
+    RideService --> TripDB[(Trip SQL DB)]
+    RideService --> Payment[Payment Provider]
+    LocationService --> WebSocket[WebSocket Server]
+    WebSocket --> Rider
 ```
 
-## 3. Deep Dive: Geospatial Indexing
+## Deep dives
 
-The biggest challenge is finding "nearest drivers" in a 2D plane efficiently. A standard SQL query `WHERE lat BETWEEN x AND y` is too slow.
+### Spatial Indexing (The Core Challenge)
+To find the "nearest" driver, we cannot query a standard SQL DB using `SELECT... WHERE distance < X` (too slow).
+- **Approach**: Use **Geo-hashing**. Divide the world into a grid of cells. Each cell has a unique string ID.
+- **Optimization**: Store driver IDs in a Redis sorted set where the score is the geo-hash. To find drivers, we calculate the hash of the rider's location and query that cell and its 8 neighbors.
 
-### Google S2 Geometry / H3 (Uber)
-Instead of raw coordinates, the system uses **Grid-based Indexing**:
-- **S2 Cells**: Maps the sphere to a 1D Hilbert Curve. The world is divided into cells of varying sizes.
-- **Process**:
-    1. Driver updates location every few seconds.
-    2. System maps $(lat, lng) \rightarrow \text{Cell ID}$.
-    3. Store `Cell ID` in a Redis sorted set or geospatial index.
-    4. When a rider requests a ride, query the current cell and adjacent cells for available drivers.
-
-### Location Update Frequency
-To avoid overloading the system:
-- **Adaptive Updates**: Drivers moving at high speeds update more frequently; stationary drivers update less often.
-- **WebSocket/gRPC**: Use persistent connections for real-time bidirectional updates rather than HTTP polling.
-
-## 4. Data Modeling
-
-### Driver Location (In-Memory / Redis)
-| Key | Value | TTL |
-| :--- | :--- | :--- |
-| `driver_loc:{driver_id}` | `{lat, lng, cell_id, status}` | 30s |
-
-### Trip Table (SQL - for consistency)
-| Column | Type | Description |
-| :--- | :--- | :--- |
-| `trip_id` | UUID (PK) | Unique trip ID |
-| `rider_id` | UUID | Linked rider |
-| `driver_id` | UUID | Linked driver |
-| `pickup_loc` | Point | Geo coordinates |
-| `dropoff_loc` | Point | Geo coordinates |
-| `status` | Enum | REQUESTED, ACCEPTED, IN_PROGRESS, COMPLETED |
-| `fare` | Decimal | Final price |
-
-## 5. Trade-offs & Bottlenecks
-
-### Matching Algorithms
-- **Greedy**: Match the absolute nearest driver. (Fast, but may leave other riders stranded).
-- **Global Optimization**: Batch requests every 2 seconds and use the Hungarian Algorithm to minimize total wait time for all users. (Better UX, higher latency).
+### Real-time Tracking
+Using HTTP polling for location is too expensive.
+- **Mechanism**: **WebSockets** or **gRPC**.
+- **Flow**: The driver's app pushes location updates to the `LocationService` $\rightarrow$ Service updates Redis $\rightarrow$ Service pushes the update to the matched Rider's WebSocket connection.
 
 ### Surge Pricing
-- **Demand/Supply Ratio**: Calculate `(requests / available_drivers)` per cell.
-- **Price Multiplier**: If ratio $> \text{threshold}$, apply a multiplier (e.g., 1.5x).
-- **Smoothing**: Use a moving average to prevent prices from jumping wildly every second.
+- **Algorithm**: A background analyzer monitors the ratio of `RideRequests` vs `AvailableDrivers` per geo-cell.
+- **Implementation**: If the ratio exceeds a threshold, a multiplier is applied to the base fare. This is cached in Redis for quick lookup during the `request ride` call.
 
-## 6. Interview Q&A
+## Bottlenecks and trade-offs
 
-**Q: How do you handle the "Thundering Herd" problem when 100 drivers are notified of one ride?**
-**A**: Use a **Sequential Notification** strategy. Notify the top 5 nearest drivers. If none accept within 10 seconds, notify the next 5. This prevents 100 drivers from trying to "claim" the ride simultaneously.
+- **The "Thundering Herd"**: When a ride is offered, multiple drivers might try to accept it.
+- **Mitigation**: Use a **Distributed Lock** (Redis Redlock) on the `RideId`. Only the first driver to acquire the lock wins the trip.
+- **Consistency vs Availability**: We prioritize consistency for matching (no double-matching) but availability for location updates (it's okay if a location update is dropped).
 
-**Q: How do you ensure the rider doesn't see the driver "jump" on the map?**
-**A**: **Client-side Interpolation**. The app doesn't just teleport the icon to the new coordinate; it smoothly animates the icon from point A to point B over the update interval.
+## Follow-up questions
 
-## Related notes
-
-- [CAP, PACELC and Consistency](cap-consistency.md)
-- [Sharding and queues](sharding-and-queues.md)
-- [Rate limiter](rate-limiter.md)
+- **How do you handle "dead zones" (no drivers)?** — Expand the geo-hash search radius incrementally until a driver is found.
+- **How do you handle a driver disconnecting mid-trip?** — The system detects the WebSocket timeout and triggers a "Re-assignment" flow or alerts the rider.
+- **How to optimize for "battery life" on driver apps?** — Implement adaptive location updates: update every 3s when moving, every 30s when stationary.

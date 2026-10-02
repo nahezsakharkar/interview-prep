@@ -1,93 +1,92 @@
 ---
-title: "Design Case Study: Video Streaming System"
-tags: ["system-design","video","cdn"]
+title: "System Design Case: Video Streaming (Netflix/YouTube)"
+tags: ["system-design","case-study","content-delivery"]
 difficulty: hard
-status: learning
+status: revised
 last_reviewed: 2026-10-02
 ---
 
-# Video Streaming System Design (Netflix/YouTube style)
+# System Design Case: Video Streaming
 
-## 1. Requirements
+## Requirements
 
-### Functional
-- **Video Upload**: Users can upload videos of varying formats and sizes.
-- **Video Playback**: Users can stream videos with minimal buffering.
-- **Adaptive Bitrate Streaming (ABS)**: Automatically adjust quality based on network speed.
-- **Search/Recommendation**: Find videos based on metadata.
-- **Playback State**: Remember where the user stopped watching.
+### Functional requirements
+- **Upload Video**: Users can upload videos of varying formats and sizes.
+- **Stream Video**: Users can watch videos with adaptive quality (auto-adjusting based on bandwidth).
+- **Search**: Find videos by title or tags.
+- **User Progress**: Save the current timestamp for "resume watching."
 
-### Non-Functional
-- **Low Latency (Start-up)**: Video should start playing almost instantly.
-- **Availability**: System must be globally available.
-- **Scalability**: Handle massive concurrent viewers (e.g., during a live event).
-- **Reliability**: No mid-stream crashes or corruption.
+### Non-functional requirements
+- **Low Buffering**: Video should start playing almost instantly.
+- **High Availability**: Content must be accessible globally.
+- **Scalability**: Support millions of concurrent viewers.
+- **Reliability**: No loss of video data upon upload.
 
-## 2. High-Level Architecture
+## Estimation
+- **Daily Uploads**: 100k videos.
+- **Peak Viewers**: 10 Million concurrent.
+- **Storage**: Petabytes of data.
+- **Bandwidth**: Massive egress costs $\rightarrow$ necessitates a robust CDN strategy.
+
+## API design
+
+### Endpoints
+| Method | Path | Purpose |
+| :--- | :--- | :--- |
+| POST | `/video/upload` | Start upload (returns upload URL) |
+| GET | `/video/stream/{id}` | Get streaming manifest (m3u8/mpd) |
+| POST | `/video/progress` | Update playback timestamp |
+| GET | `/search?q=...` | Search for videos |
+
+## Data model
+
+- **Video Metadata**: SQL (PostgreSQL) for title, description, user ID, and upload date.
+- **Video Blobs**: Object Storage (AWS S3 / Google Cloud Storage).
+- **Playback Progress**: NoSQL (Cassandra/DynamoDB) for high-write throughput of timestamps.
+- **Search Index**: Elasticsearch.
+
+## High-level architecture
 
 ```mermaid
 flowchart TD
-    User[User Device] --> LB[Load Balancer]
-    LB --> API[API Gateway]
-    API --> MetaSrv[Metadata Service]
-    
-    User --> CDN[Edge CDN Nodes]
-    CDN --> Origin[Origin Server]
-    
-    Upload[Uploader] --> TranscodeSrv[Transcoding Pipeline]
-    TranscodeSrv --> S3[Object Store - S3]
-    S3 --> Origin
-    
-    API --> PlaybackSrv[Playback Service]
-    PlaybackSrv --> Redis[(Playback State)]
+    User --> CDN[CDN Edge Nodes]
+    CDN --> Frontend[Web/Mobile App]
+    Frontend --> API[API Gateway]
+    API --> VideoService[Video Metadata Service]
+    API --> UploadService[Upload Orchestrator]
+    UploadService --> S3_Raw[S3 Raw Bucket]
+    S3_Raw --> Transcoder[Transcoding Pipeline]
+    Transcoder --> S3_Processed[S3 Processed Bucket]
+    S3_Processed --> CDN
+    API --> ProgressDB[(Cassandra)]
 ```
 
-## 3. Deep Dive: The Video Pipeline
+## Deep dives
 
-### Transcoding and Encoding
-A raw video is too large for direct streaming. The **Transcoding Pipeline** performs:
-1. **Chunking**: Splits video into 2-10 second segments.
-2. **Multi-bitrate Encoding**: Creates multiple versions of each chunk (e.g., 360p, 720p, 1080p, 4K) using different codecs (H.264, VP9, AV1).
-3. **Packaging**: Wraps chunks into streaming protocols (HLS or DASH).
+### The Transcoding Pipeline
+A raw video is too large and in a single format. It must be processed before streaming.
+1. **Chunking**: Split the video into small segments (e.g., 2-10 seconds).
+2. **Encoding**: Encode each segment into multiple resolutions (360p, 720p, 1080p, 4K) and formats (H.264, VP9, AV1).
+3. **Manifest Generation**: Create a manifest file (m3u8 for HLS or mpd for MPEG-DASH) that lists all segments for each quality level.
 
 ### Adaptive Bitrate Streaming (ABS)
-The client player monitors the download speed of the current chunk.
-- **Network Slows**: Client requests the next chunk from the 360p manifest.
-- **Network Speeds Up**: Client requests the next chunk from the 1080p manifest.
-- **Result**: The video keeps playing without buffering, though quality may fluctuate.
+The client-side player doesn't just download one file; it continuously monitors network speed.
+- **Logic**: If the bandwidth drops, the player requests the next 5-second segment from the 360p manifest instead of 1080p. This prevents the "spinning wheel" of buffering.
 
-## 4. Content Delivery Network (CDN)
+### Content Delivery Network (CDN)
+To avoid the "Long Haul" from a central server, we use a CDN.
+- **Edge Caching**: Popular videos are cached at edge locations near the user.
+- **Cache Eviction**: Use LRU (Least Recently Used) to keep only popular content at the edge; rare videos are fetched from the origin S3 bucket on demand.
 
-To avoid the "bottleneck" of a single origin server, the system uses a **Hierarchical CDN**:
-- **Edge Nodes**: Located physically close to the user. They cache the most popular chunks.
-- **Regional Nodes**: Serve as a mid-tier cache between the edge and the origin.
-- **Origin Server**: The source of truth (S3 bucket).
+## Bottlenecks and trade-offs
 
-### Cache Eviction
-Use **Least Recently Used (LRU)**. Popular videos stay at the edge; obscure videos are fetched from the origin.
+- **Storage vs. Quality**: Storing 5 versions of every video is expensive.
+- **Mitigation**: Use "Just-in-Time" (JIT) transcoding for rare videos or only store high-resolution versions for the first 30 days.
+- **Upload Reliability**: Large videos often fail mid-upload.
+- **Mitigation**: Implement **Chunked Uploads** (Multipart upload). The client uploads 5MB chunks; the server tracks which chunks are received and only requests the missing ones upon retry.
 
-## 5. Trade-offs & Bottlenecks
+## Follow-up questions
 
-### Storage vs. Quality
-- **Trade-off**: Storing 5 different resolutions of the same 4K video increases storage costs by 5-10x.
-- **Optimization**: Use **Per-Title Encoding**. High-action videos (sports) get higher bitrates; static videos (interviews) get lower bitrates.
-
-### Cold Start Problem
-The first few seconds of a video are the most critical.
-- **Optimization**: Pre-cache the first 2 seconds (the "intro chunk") of popular videos at every edge node to ensure instant playback.
-
-## 6. Interview Q&A
-
-**Q: How do you handle live streaming versus VOD (Video on Demand)?**
-**A**: 
-- **VOD**: Transcode once, store indefinitely, cache heavily.
-- **Live**: Use **LL-HLS (Low Latency HLS)**. The transcoding happens in real-time; chunks are created and pushed to the CDN within milliseconds.
-
-**Q: How do you prevent illegal redistribution of content?**
-**A**: Use **DRM (Digital Rights Management)** like Widevine or FairPlay. The video is encrypted, and the client must request a decryption key from a license server after authentication.
-
-## Related notes
-
-- [CAP, PACELC and Consistency](cap-consistency.md)
-- [Scalability basics](scalability-basics.md)
-- [Load balancing and caching](load-balancing-and-caching.md)
+- **How do you handle "Live Streaming"?** — Use a lower-latency protocol like LL-HLS or WebRTC, and a specialized "Live" transcoder that processes chunks in real-time.
+- **How to implement a "Continue Watching" feature?** — Periodically send the current timestamp to a high-write NoSQL DB (Cassandra). When the user clicks play, fetch the last timestamp for that `UserId` and `VideoId`.
+- **How to prevent piracy/unauthorized sharing?** — Use **Digital Rights Management (DRM)** like Widevine or FairPlay, which encrypts the segments and requires a license key from a secure server to decrypt.
