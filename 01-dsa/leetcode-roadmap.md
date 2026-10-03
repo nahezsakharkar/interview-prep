@@ -12,6 +12,7 @@ This roadmap tracks progress through the Blind 75 and NeetCode 150 lists. The fo
 
 ## Study Strategy
 1. **Identify Pattern**: Group problems by the technique they use (e.g., Two Pointers, Sliding Window).
+Note: For timing and problem volume targets, see the [4-Week Sprint Plan](../99-revision/weekly-plan.md).
 2. **Brute Force $\rightarrow$ Optimal**: Always articulate the $O(n^2)$ solution before implementing the $O(n \log n)$ or $O(n)$ one.
 3. **Edge Case Analysis**: Explicitly test for empty inputs, single-element arrays, and large constraints.
 4. **Time/Space Complexity**: Document the Big-O for every solution.

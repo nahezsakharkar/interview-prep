@@ -18,6 +18,7 @@ This section covers relational and non-relational database fundamentals and the 
 - [Normalization and schema design](normalization.md) — 1NF to 3NF, denormalization trade-offs
 - [NoSQL patterns](nosql.md) — document, key-value, columnar, and when to choose each
 - [Redis interview notes](redis.md) — caching, pub/sub, TTL, persistence, rate limiting
+- [Database Internals](internals.md) — B-Trees vs LSM, WAL, Buffer Pool, Storage Engines
 - [MongoDB and Oracle Advanced](mongodb-oracle-advanced.md) — Aggregation pipelines and enterprise SQL
 
 ## Core interview questions
